@@ -1,0 +1,152 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    font-family: 'Inter', serif;
+}
+
+.container{
+    background: linear-gradient(to right, #6a11cb, #006aff);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+.color{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    cursor: pointer;
+    transition: 0.2s opacity;
+}
+
+.color:active{
+    opacity: 0.8;
+}
+
+.color span{
+    font-family: 'Inter', serif;
+    color: white;
+    font-size: 2.5vw;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    padding-bottom: 4rem;
+}
+.copied-tooltip {
+position: absolute;
+background-color: #555; /* Dark background */
+color: #fff; /* White text */
+border-radius: 5px;
+padding: 8px 12px; /* More padding for a roomier look */
+font-size: 14px;
+font-family: 'Inter', sans-serif;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+pointer-events: none;
+opacity: 0;
+transition: opacity 0.3s ease;
+white-space: nowrap; /* Keeps the text on a single line */
+z-index: 1000; /* Ensures that the tooltip appears above other elements */
+}
+.form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    /*gap: 10px;*/ /* Removed the gap */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    width: 70%; 
+    max-width: 400px;
+}
+
+/* New CSS */
+#form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: none; /* Removed the border */
+    border-radius: 5px;
+    width: 85%;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: white; /* Changed the button background color to white */
+    color: #111111; /* Changed the icon color to black */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 15%;
+}
+
+button:hover {
+    background-color: #ffffff;
+    color: #111111;
+}
+
+@media only screen and (max-width: 500px) {
+    .form-container {
+        width: 70%; /* Make the form a bit wider on small screens. Adjust as needed. */
+    }
+
+    #form {
+        flex-direction: row;
+    }
+
+    /* Reduce the width of the text input field on smaller screens */
+    input[type="text"] {
+        width: 80%;
+    }
+
+    /* Reduce the width of the button on smaller screens */
+    button {
+        width: 20%;
+        padding: 0px; /* Adjust the padding as needed */
+    }
+
+    .color span {
+        font-size: 2.5vw; /* Adjust as needed */
+    }
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;  
+    font-family: 'Inter', serif;
+    color: #f0f0f0;
+    padding-bottom: 20px;
+
+}
+
+footer a {
+    color: #ffffff; /* Change to match your site's color scheme */
+    font-weight: 700;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.heart{
+    color: red;
+}
