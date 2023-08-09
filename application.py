@@ -1,5 +1,6 @@
 import openai
 import json
+import re
 from dotenv import dotenv_values
 from flask import Flask, render_template, request
 from flask_talisman import Talisman
@@ -24,32 +25,38 @@ csp = {
 Talisman(application, content_security_policy=csp)
 
 def get_palette(text):
-    prompt = f"""
-    You are color palette generating assitant that responds to text prompts for color palettes
-    You should generate color palettes that perfectly fit the theme, mood or instructions in the prompt.
-    The palettes should be between 2 and 8 colors. 
-    
-    Q: Convert the following verbal description of a color palette into a list of colors: Tropical Beach
-    A: ["#D0E6A5", "#FFDD94", "#FA897B", "#CCABD8", "#3A5A40"]
-    
-    Q: Convert the following verbal description of a color palette into a list of colors: Instagram
-    A: ["#405DE6", "#5851DB", "#833AB4", "#C13584", "#E1306C", "#FD1D1D", "#F56040"]
-    
-    Output Format: a JSON array of hexadecimal color codes
-    
-    Q: Convert the following verbal description of a color palette into a list of colors: {text}
-    A: 
-    """
-    
+    messages = [
+    {
+        "role": "user",
+        "content": "You are a color palette generating assistant. I'll give you a theme, mood, or context, and you'll provide a color palette. Here's an example: 'Tropical Beach'."
+    },
+    {
+        "role": "assistant",
+        "content": '["#D0E6A5", "#FFDD94", "#FA897B", "#CCABD8", "#3A5A40"]'
+    },
+    {
+        "role": "user",
+        "content": f"Convert the following verbal description of a color palette into a list of colors: {text}. Remember, the palette should STRICTLY contain between 2 and 8 hexadecimal color codes. No exceptions."
+    }
+]
+
     response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo",
-        messages = [{"role": "user", "content": prompt}],
-        max_tokens = 500
-    )
+    model="gpt-3.5-turbo",
+    messages=messages,
+    max_tokens=500
+)
     
     response_text = response.choices[0].message['content']
-    palette = json.loads(response_text.strip())
-    return palette
+    #palette = json.loads(response_text.strip()) //Deprecated, Use Regex instead
+
+    # Extract hexadecimal color codes from the response
+    hex_codes = re.findall(r'(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))', response_text) # Regex to extract hex codes from the response
+
+    # Post-processing
+    if len(hex_codes) > 8:
+        hex_codes = hex_codes[:8]  # Truncate to the first 8 colors if there are more than 8
+    print(hex_codes)
+    return hex_codes
 
 @application.route('/palette', methods=['POST'])
 def prompt_for_palette():
