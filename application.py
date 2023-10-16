@@ -22,9 +22,9 @@ csp = {
         'cdnjs.cloudflare.com'
     ]
 }
-Talisman(application, content_security_policy=csp)
+#Talisman(application, content_security_policy=csp)
 
-def get_palette(text):
+def generate_palette(text):
     messages = [
     {
         "role": "user",
@@ -47,6 +47,7 @@ def get_palette(text):
 )
     
     response_text = response.choices[0].message['content']
+    print(response_text)
     #palette = json.loads(response_text.strip()) //Deprecated, Use Regex instead
 
     # Extract hexadecimal color codes from the response
@@ -55,15 +56,46 @@ def get_palette(text):
     # Post-processing
     if len(hex_codes) > 8:
         hex_codes = hex_codes[:8]  # Truncate to the first 8 colors if there are more than 8
-    print(hex_codes)
+    
+    # Check the number of hex codes
+    if 2 <= len(hex_codes) <= 8:  # If the number of hex codes is between 2 and 8
+        print(hex_codes)
+        return hex_codes
+
+    # If not a valid number of hex codes, assume it's a message and return it
+    else:
+        print("Received a message instead of hex codes:", response_text)
+        return response_text
+    
     return hex_codes
 
+def generate_description(initial_prompt, palette):
+    messages = [
+    {
+        "role": "user",
+        "content": f"I have a color palette {palette} generated for the theme '{initial_prompt}'. Can you provide a brief textual description (not more than two sentences) based on this palette and theme?"
+    }
+]
+
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=messages,
+    max_tokens=150
+)
+    
+    return response.choices[0].message['content']
 @application.route('/palette', methods=['POST'])
 def prompt_for_palette():
     query = request.form.get("query")
-    palette = get_palette(query)
-    return {"palette": palette}
+    result = generate_palette(query)
+
+    if isinstance(result, list):  # If the result is a list of hex codes
+        palette = result
+        description = generate_description(query, palette)
+        return {"palette": palette, "description": description}
     
+    else:  # If the result is a message
+        return {"message": result}
 
 @application.route('/')
 def index():
